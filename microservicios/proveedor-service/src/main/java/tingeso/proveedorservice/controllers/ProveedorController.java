@@ -2,20 +2,19 @@ package tingeso.proveedorservice.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import tingeso.proveedorservice.entities.ProveedorEntity;
 import tingeso.proveedorservice.services.ProveedorService;
 
 import java.util.List;
 
-@Controller
 @RestController
+@RequestMapping
 public class ProveedorController {
     @Autowired
     ProveedorService proveedorService;
 
-    @PostMapping()
+    @PostMapping
     public ResponseEntity create(@RequestParam("codigo") String codigo,
                                  @RequestParam("nombre") String nombre,
                                  @RequestParam("categoria") String categoria,
