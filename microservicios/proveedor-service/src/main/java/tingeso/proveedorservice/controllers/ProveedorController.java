@@ -9,7 +9,7 @@ import tingeso.proveedorservice.services.ProveedorService;
 import java.util.List;
 
 @RestController
-@RequestMapping
+@RequestMapping("/proveedores")
 public class ProveedorController {
     @Autowired
     ProveedorService proveedorService;
