@@ -5,12 +5,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import tingeso.acopiolecheservice.entities.AcopioLecheEntity;
+import tingeso.acopiolecheservice.models.Quincena;
 import tingeso.acopiolecheservice.services.AcopioLecheService;
 
 import java.util.List;
 
 @RestController
-@RequestMapping
+@RequestMapping("/acopio-leches")
 public class AcopioLecheController {
     @Autowired
     AcopioLecheService acopioLecheService;
@@ -28,11 +29,10 @@ public class AcopioLecheController {
         }
         else{
          */
+        Quincena quincena = new Quincena(year, mes, numero);
         try {
-            // Cambiar esta quincena cuando se resuelva la duda de como trabajar con esta
-            String quincena = year.toString() + "/" + mes.toString() + "/" + numero.toString();
             List<AcopioLecheEntity> acopiosLeche = acopioLecheService.leerExcel(file);
-            acopioLecheService.validarListaAcopioLecheQuincena(acopiosLeche, quincena);
+            acopioLecheService.validarListaAcopioLecheQuincena(acopiosLeche, quincena.toString());
             acopioLecheService.guardarAcopiosLeches(acopiosLeche);
             return ResponseEntity.ok("Datos registrados correctamente!");
         } catch (IllegalArgumentException e) {
@@ -40,10 +40,9 @@ public class AcopioLecheController {
         }
     }
 
-    // Ver si se arregla la ruta
-    @GetMapping("/byproveedor-quincena/{codigoProveedor}/{quincena}")
-    public ResponseEntity<List<AcopioLecheEntity>> getAllByProveedorQuincena(@PathVariable("codigoProveedor") String codigoProveedor,
-                                                                             @PathVariable("quincena") String quincena) {
+    @GetMapping("/byproveedor-quincena")
+    public ResponseEntity<List<AcopioLecheEntity>> getAllByProveedorQuincena(@RequestParam("codigoProveedor") String codigoProveedor,
+                                                                             @RequestParam("quincena") String quincena) {
         List<AcopioLecheEntity> acopiosLeche = acopioLecheService.obtenerAcopiosLechePorProveedorQuincena(codigoProveedor, quincena);
         return ResponseEntity.ok(acopiosLeche);
     }
