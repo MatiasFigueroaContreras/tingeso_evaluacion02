@@ -27,7 +27,7 @@ public class PagoService {
     }
 
     public List<PagoEntity> obtenerPagos() {
-        return pagoRepository.findAllByOrderByQuincenaDescProveedorCodigoAsc();
+        return pagoRepository.findAllByOrderByQuincenaDescCodigoProveedorAsc();
     }
 
     public List<PagoEntity> obtenerPagosPorQuincena(String quincena) {
@@ -52,6 +52,7 @@ public class PagoService {
     public PagoEntity calcularPago(DatosCentroAcopioEntity datosCentroAcopio) {
         PagoEntity pago = new PagoEntity();
         pago.setCodigoProveedor(datosCentroAcopio.getCodigoProveedor());
+        pago.setProveedor(datosCentroAcopio.getProveedor());
         pago.setQuincena(datosCentroAcopio.getQuincena());
         pago.setDatosCentroAcopio(datosCentroAcopio);
         pago.setPagoLeche(calcularPagoLeche(datosCentroAcopio));
@@ -85,7 +86,7 @@ public class PagoService {
     }
 
     public Integer calcularPagoGrasa(DatosCentroAcopioEntity datosCentroAcopio) {
-        Integer porcentajeGrasa = datosCentroAcopio.getGrasaSolidoTotal().getPorcentajeGrasa();
+        Integer porcentajeGrasa = datosCentroAcopio.getLaboratorioLeche().getPorcentajeGrasa();
         Integer totalKlsLeche = datosCentroAcopio.getTotalKlsLeche();
         Integer pago;
         if (porcentajeGrasa >= 0 && porcentajeGrasa <= 20) {
@@ -100,7 +101,7 @@ public class PagoService {
     }
 
     public Integer calcularPagoSolidoTotal(DatosCentroAcopioEntity datosCentroAcopio) {
-        Integer porcentajeSolidoTotal = datosCentroAcopio.getGrasaSolidoTotal().getPorcentajeSolidoTotal();
+        Integer porcentajeSolidoTotal = datosCentroAcopio.getLaboratorioLeche().getPorcentajeSolidoTotal();
         Integer totalKlsLeche = datosCentroAcopio.getTotalKlsLeche();
         Integer pago;
         if (porcentajeSolidoTotal >= 0 && porcentajeSolidoTotal <= 7) {

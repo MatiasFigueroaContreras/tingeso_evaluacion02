@@ -11,5 +11,5 @@ public interface PagoRepository extends JpaRepository<PagoEntity, String>{
     boolean existsByQuincena(String quincena);
 
     List<PagoEntity> findAllByQuincena(String quincena);
-    List<PagoEntity> findAllByOrderByQuincenaDescProveedorCodigoAsc();
+    List<PagoEntity> findAllByOrderByQuincenaDescCodigoProveedorAsc();
 }

@@ -1,9 +1,14 @@
 package tingeso.pagoservice.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
 import org.springframework.stereotype.Service;
-import tingeso.pagoservice.config.RestTemplateConfig;
+import org.springframework.web.client.RestTemplate;
 import tingeso.pagoservice.entities.*;
+import tingeso.pagoservice.models.AcopioLeche;
+import tingeso.pagoservice.models.LaboratorioLeche;
+import tingeso.pagoservice.models.Proveedor;
+import tingeso.pagoservice.models.Quincena;
 import tingeso.pagoservice.repositories.DatosCentroAcopioRepository;
 
 import java.util.*;
@@ -13,7 +18,10 @@ public class DatosCentroAcopioService {
     @Autowired
     DatosCentroAcopioRepository datosCentroAcopioRepository;
     @Autowired
-    RestTemplateConfig restTemplate;
+    RestTemplate restTemplate;
+    String LABORATORIO_LECHE_URL = "http://laboratorio-leche-service/laboratorio-leche";
+    String PROVEEDORES_URL = "http://proveedor-service/proveedores";
+    String ACOPIO_LECHE_URL = "http://acopio-leche-service/acopio-leches";
 
 
     public void guardarDatosCA(DatosCentroAcopioEntity datosCentroAcopio) {
@@ -37,30 +45,40 @@ public class DatosCentroAcopioService {
     }
 
     public boolean existenDatosCAParaCalculoPorQuincena(String quincena) {
-        return acopioLecheService.existenAcopiosLechePorQuincena(quincena) &&
-                grasaSolidoTotalService.existeGrasaSolidoTotalPorQuincena(quincena);
+        Quincena quincenaObj = Quincena.stringToQuincena(quincena);
+        Map<String, String> params = quincenaObj.toMap();
+        Boolean existeAcopio = restTemplate.getForObject(ACOPIO_LECHE_URL + "/exists/byquincena?year={year}&mes={mes}&quincena={quincena}", Boolean.class, params);
+        Boolean existeLaboratorio = restTemplate.getForObject(LABORATORIO_LECHE_URL + "/exists/byquincena?year={year}&mes={mes}&quincena={quincena}", Boolean.class, params);
+        return existeAcopio && existeLaboratorio;
     }
 
-    public DatosCentroAcopioEntity calcularDatosCAPorProveedorQuincena(String codigoProveedor, String quincena) {
+    public DatosCentroAcopioEntity calcularDatosCAPorProveedorQuincena(Proveedor proveedor, String quincena) {
         DatosCentroAcopioEntity datosCentroAcopio = new DatosCentroAcopioEntity();
-        datosCentroAcopio.setCodigoProveedor(codigoProveedor);
+        datosCentroAcopio.setProveedor(proveedor);
+        datosCentroAcopio.setCodigoProveedor(proveedor.getCodigo());
         datosCentroAcopio.setQuincena(quincena);
         calcularDatosAcopioLeche(datosCentroAcopio);
-        GrasaSolidoTotalEntity grasaSolidoTotal;
+        LaboratorioLeche laboratorioLeche;
         if(datosCentroAcopio.getTotalKlsLeche() == 0){
             //Se asigna 0 porcentajes si no han entregado datos para algun proveedor, considerando que este no envio leche.
-            grasaSolidoTotalService.guardarGrasaSolidoTotal(new GrasaSolidoTotalEntity("", 0, 0, codigoProveedor, quincena));
+            LaboratorioLeche labLeche = new LaboratorioLeche("", 0, 0, proveedor.getCodigo(), quincena);
+            HttpEntity<LaboratorioLeche> request = new HttpEntity<>(labLeche);
+            restTemplate.postForObject(LABORATORIO_LECHE_URL, request, String.class);
         }
-        grasaSolidoTotal = grasaSolidoTotalService.obtenerGrasaSolidoTotalPorProveedorQuincena(proveedor, quincena);
-        datosCentroAcopio.setGrasaSolidoTotal(grasaSolidoTotal);
+        Map<String, String> params = Quincena.stringToQuincena(quincena).toMap();
+        params.put("codigoProveedor", proveedor.getCodigo());
+        laboratorioLeche = restTemplate.getForObject(LABORATORIO_LECHE_URL + "/byproveedor-quincena?codigoProveedor={codigoProveedor}&year={year}&mes={mes}&quincena={quincena}", LaboratorioLeche.class, params);
+        datosCentroAcopio.setIdLaboratorioLeche(laboratorioLeche.getId());
+        datosCentroAcopio.setLaboratorioLeche(laboratorioLeche);
         calcularVariacionesDatosCA(datosCentroAcopio);
         return datosCentroAcopio;
     }
 
-    public List<DatosCentroAcopioEntity> calcularDatosCAPorQuincena(QuincenaEntity quincena) {
-        List<Proveedor> proveedores = proveedorService.obtenerProveedores();
+    public List<DatosCentroAcopioEntity> calcularDatosCAPorQuincena(String quincena) {
+        Proveedor[] proveedores = restTemplate.getForObject(PROVEEDORES_URL, Proveedor[].class);
+
         List<DatosCentroAcopioEntity> listaDatosCa = new ArrayList<>();
-        for (ProveedorEntity proveedor : proveedores) {
+        for (Proveedor proveedor : proveedores) {
             DatosCentroAcopioEntity datosCaProveedor = calcularDatosCAPorProveedorQuincena(proveedor, quincena);
             listaDatosCa.add(datosCaProveedor);
         }
@@ -69,14 +87,16 @@ public class DatosCentroAcopioService {
     }
 
     public void calcularDatosAcopioLeche(DatosCentroAcopioEntity datosCentroAcopio) {
-        List<AcopioLecheEntity> acopiosLeche = acopioLecheService.obtenerAcopiosLechePorProveedorQuincena(datosCentroAcopio.getProveedor(), datosCentroAcopio.getQuincena());
+        Map<String, String> params = Quincena.stringToQuincena(datosCentroAcopio.getQuincena()).toMap();
+        params.put("codigoProveedor", datosCentroAcopio.getCodigoProveedor());
+        AcopioLeche[] acopiosLeche = restTemplate.getForObject(ACOPIO_LECHE_URL + "/byproveedor-quincena?codigoProveedor={codigoProveedor}&year={year}&mes={mes}&quincena={quincena}", AcopioLeche[].class, params);
         Integer nDiasEnvioMT = 0;
         Integer nDiasEnvioM = 0;
         Integer nDiasEnvioT;
         Integer totalKlsLeche = 0;
         HashMap<Integer, Boolean> diasEnviosM = new HashMap<>();
         HashMap<Integer, Boolean> diasEnviosT = new HashMap<>();
-        for (AcopioLecheEntity acopioLeche : acopiosLeche) {
+        for (AcopioLeche acopioLeche : acopiosLeche) {
             Calendar calendar = new GregorianCalendar();
             calendar.setTime(acopioLeche.getFecha());
             Integer dia = calendar.get(Calendar.DAY_OF_MONTH);
@@ -107,24 +127,27 @@ public class DatosCentroAcopioService {
         Integer variacionLeche = 0;
         Integer variacionGrasa = 0;
         Integer variacionSolidoTotal = 0;
-        GrasaSolidoTotalEntity grasaSolidoTotal = datosCentroAcopio.getGrasaSolidoTotal();
-        QuincenaEntity quincenaAnterior = datosCentroAcopio.getQuincena().obtenerQuincenaAnterior();
+        LaboratorioLeche laboratorioLeche = datosCentroAcopio.getLaboratorioLeche();
+        Quincena quincena = Quincena.stringToQuincena(datosCentroAcopio.getQuincena());
+        Quincena quincenaAnterior = quincena.obtenerQuincenaAnterior();
         try {
-            DatosCentroAcopioEntity datosCaAnterior = obtenerDatosCAPorProveedorQuincena(datosCentroAcopio.getProveedor(), quincenaAnterior);
-            GrasaSolidoTotalEntity grasaStAnterior = datosCaAnterior.getGrasaSolidoTotal();
+            DatosCentroAcopioEntity datosCaAnterior = obtenerDatosCAPorProveedorQuincena(datosCentroAcopio.getCodigoProveedor(), quincenaAnterior.toString());
+            LaboratorioLeche laboratorioLecheAnterior = restTemplate.getForObject(LABORATORIO_LECHE_URL + "/" + datosCaAnterior.getIdLaboratorioLeche(), LaboratorioLeche.class);
             if(datosCaAnterior.getTotalKlsLeche() != 0){
                 variacionLeche = (datosCentroAcopio.getTotalKlsLeche() / datosCaAnterior.getTotalKlsLeche() - 1) * 100;
             }
-            if(grasaStAnterior.getPorcentajeGrasa() != 0){
-                variacionGrasa = (grasaSolidoTotal.getPorcentajeGrasa() / grasaStAnterior.getPorcentajeGrasa() - 1) * 100;
+            if(laboratorioLecheAnterior.getPorcentajeGrasa() != 0){
+                variacionGrasa = (laboratorioLeche.getPorcentajeGrasa() / laboratorioLecheAnterior.getPorcentajeGrasa() - 1) * 100;
             }
-            if(grasaStAnterior.getPorcentajeSolidoTotal() != 0){
-                variacionSolidoTotal = (grasaSolidoTotal.getPorcentajeSolidoTotal() / grasaStAnterior.getPorcentajeSolidoTotal() - 1) * 100;
+            if(laboratorioLecheAnterior.getPorcentajeSolidoTotal() != 0){
+                variacionSolidoTotal = (laboratorioLeche.getPorcentajeSolidoTotal() / laboratorioLecheAnterior.getPorcentajeSolidoTotal() - 1) * 100;
             }
         } catch (Exception e) {
             //No existen datos del centro acopio anteriormente.
-            if (acopioLecheService.existenAcopiosLechePorQuincena(quincenaAnterior) ||
-                    grasaSolidoTotalService.existeGrasaSolidoTotalPorQuincena(quincenaAnterior)) {
+            Map<String, String> params = quincenaAnterior.toMap();
+            Boolean existeAcopio = restTemplate.getForObject(ACOPIO_LECHE_URL + "/exists/byquincena?year={year}&mes={mes}&quincena={quincena}", Boolean.class, params);
+            Boolean existeLaboratorio = restTemplate.getForObject(LABORATORIO_LECHE_URL + "/exists/byquincena?year={year}&mes={mes}&quincena={quincena}", Boolean.class, params);
+            if (existeAcopio || existeLaboratorio) {
                 throw new IllegalArgumentException("Existen pagos del centro de acopio no calculados para la quincena anterior");
             }
         }

@@ -10,15 +10,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 import tingeso.acopiolecheservice.entities.AcopioLecheEntity;
+import tingeso.acopiolecheservice.models.Quincena;
 import tingeso.acopiolecheservice.repositories.AcopioLecheRepository;
 
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class AcopioLecheService {
@@ -66,8 +64,7 @@ public class AcopioLecheService {
         Date fecha = acopioLeche.getFecha();
         String codigoProveedor = acopioLeche.getCodigoProveedor();
         Boolean existeProveedor = restTemplate.getForObject("http://proveedor-service/proveedores/exists/" + codigoProveedor, Boolean.class);
-        // !!! Ver si usar un package para todos con las funciones de la quincena o un modelo en cada servicio
-        // QuincenaEntity quincena = acopioLeche.getQuincena();
+        Quincena quincena = Quincena.stringToQuincena(acopioLeche.getQuincena());
         if (!turno.equals("M") && !turno.equals("T")) {
             throw new IllegalArgumentException("Algun turno no es valido, debe ser M o T");
         }
@@ -76,13 +73,10 @@ public class AcopioLecheService {
             throw new IllegalArgumentException("Los kilos de leche tienen que ser positivos");
         }
 
-        /*
-        !!! Ver si usar un package para todos con las funciones de la quincena o un modelo en cada servicio
+
         if (!quincena.estaDentroQuincena(fecha)) {
             throw new IllegalArgumentException("Las fechas ingresadas tienen que coincidir con la quincena");
         }
-
-         */
 
         if (!existeProveedor) {
             throw new IllegalArgumentException("Los proveedores tienen que estar registrados");
@@ -155,5 +149,10 @@ public class AcopioLecheService {
             int codigo = (int) cell.getNumericCellValue();
             return Integer.toString(codigo);
         }
+    }
+
+    public boolean existenPagosPorQuincena(Quincena quincena) {
+        Map<String, String> params = quincena.toMap();
+        return restTemplate.getForObject("http://pago-service/pagos/exists/byquincena?year={year}&mes={mes}&quincena={quincena}", Boolean.class, params);
     }
 }

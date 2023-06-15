@@ -18,18 +18,14 @@ public class AcopioLecheController {
 
     @PostMapping("/importar")
     public ResponseEntity<String> importarAcopioLeche(@RequestParam("file") MultipartFile file,
-                                                     @RequestParam("year") Integer year,
-                                                     @RequestParam("mes") Integer mes,
-                                                     @RequestParam("quincena") Integer numero) {
-        /*
-        QuincenaEntity quincena = quincenaService.ingresarQuincena(year, mes, numero);
-        if(pagoService.existenPagosPorQuincena(quincena)){
-            redirectAttr.addFlashAttribute("message", "Ya existen datos calculados para la quincena seleccionada")
-                    .addFlashAttribute("class", "error-alert");
-        }
-        else{
-         */
+                                                      @RequestParam("year") Integer year,
+                                                      @RequestParam("mes") Integer mes,
+                                                      @RequestParam("quincena") Integer numero) {
         Quincena quincena = new Quincena(year, mes, numero);
+        if(acopioLecheService.existenPagosPorQuincena(quincena)){
+            return ResponseEntity.badRequest().body("Ya existen datos calculados para la quincena seleccionada");
+        }
+
         try {
             List<AcopioLecheEntity> acopiosLeche = acopioLecheService.leerExcel(file);
             acopioLecheService.validarListaAcopioLecheQuincena(acopiosLeche, quincena.toString());
@@ -42,14 +38,20 @@ public class AcopioLecheController {
 
     @GetMapping("/byproveedor-quincena")
     public ResponseEntity<List<AcopioLecheEntity>> getAllByProveedorQuincena(@RequestParam("codigoProveedor") String codigoProveedor,
-                                                                             @RequestParam("quincena") String quincena) {
-        List<AcopioLecheEntity> acopiosLeche = acopioLecheService.obtenerAcopiosLechePorProveedorQuincena(codigoProveedor, quincena);
+                                                                             @RequestParam("year") Integer year,
+                                                                             @RequestParam("mes") Integer mes,
+                                                                             @RequestParam("quincena") Integer numero) {
+        Quincena quincena = new Quincena(year, mes, numero);
+        List<AcopioLecheEntity> acopiosLeche = acopioLecheService.obtenerAcopiosLechePorProveedorQuincena(codigoProveedor, quincena.toString());
         return ResponseEntity.ok(acopiosLeche);
     }
 
-    @GetMapping("/exists/byquincena/{quincena}")
-    public ResponseEntity<Boolean> existsByQuincena(@PathVariable("quincena") String quincena){
-        Boolean exists = acopioLecheService.existenAcopiosLechePorQuincena(quincena);
+    @GetMapping("/exists/byquincena")
+    public ResponseEntity<Boolean> existsByQuincena(@RequestParam("year") Integer year,
+                                                    @RequestParam("mes") Integer mes,
+                                                    @RequestParam("quincena") Integer numero){
+        Quincena quincena = new Quincena(year, mes, numero);
+        Boolean exists = acopioLecheService.existenAcopiosLechePorQuincena(quincena.toString());
         return ResponseEntity.ok(exists);
     }
 }

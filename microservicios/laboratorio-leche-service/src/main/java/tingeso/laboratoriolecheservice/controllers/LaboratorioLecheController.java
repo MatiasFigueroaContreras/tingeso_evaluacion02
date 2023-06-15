@@ -17,21 +17,39 @@ public class LaboratorioLecheController {
     LaboratorioLecheService laboratorioLecheService;
     //@Autowired
     //PagoService pagoService;
+    @GetMapping("/{id}")
+    public ResponseEntity<LaboratorioLecheEntity> get(@PathVariable("id") String id) {
+        try {
+            LaboratorioLecheEntity laboratorioLeche = laboratorioLecheService.getById(id);
+            return ResponseEntity.ok(laboratorioLeche);
+        }
+        catch (IllegalArgumentException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PostMapping
+    public ResponseEntity<String> save(@RequestBody LaboratorioLecheEntity laboratorioLeche) {
+        try{
+            laboratorioLecheService.validarDatosLaboratorioLeche(laboratorioLeche);
+            laboratorioLecheService.guardarDatosLaboratorioLeche(laboratorioLeche);
+            return ResponseEntity.ok("Datos registrados correctamente!");
+        }
+        catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 
     @PostMapping("/importar")
-    public ResponseEntity<String> importarAcopioLeche(@RequestParam("file") MultipartFile file,
-                                              @RequestParam("year") Integer year,
-                                              @RequestParam("mes") Integer mes,
-                                              @RequestParam("quincena") Integer numero) {
+    public ResponseEntity<String> importarLaboratorioLeche(@RequestParam("file") MultipartFile file,
+                                                           @RequestParam("year") Integer year,
+                                                           @RequestParam("mes") Integer mes,
+                                                           @RequestParam("quincena") Integer numero) {
         Quincena quincena = new Quincena(year, mes, numero);
-        /*
-        if(pagoService.existenPagosPorQuincena(quincena)){
-            redirectAttr.addFlashAttribute("message", "Ya existen datos calculados para la quincena seleccionada")
-                    .addFlashAttribute("class", "error-alert");
-        }
-                else{
-         */
 
+        if(laboratorioLecheService.existenPagosPorQuincena(quincena)){
+            return ResponseEntity.badRequest().body("Ya existen datos calculados para la quincena seleccionada");
+        }
 
         try {
             List<LaboratorioLecheEntity> laboratorioLecheList = laboratorioLecheService.leerExcel(file);
@@ -41,19 +59,26 @@ public class LaboratorioLecheController {
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
+
     }
 
     // Ver si se arregla la ruta
     @GetMapping("/byproveedor-quincena")
-    public ResponseEntity<LaboratorioLecheEntity> getAllByProveedorQuincena(@RequestParam("codigoProveedor") String codigoProveedor,
-                                                                            @RequestParam("quincena") String quincena) {
-        LaboratorioLecheEntity laboratorioLeche = laboratorioLecheService.obtenerLaboratorioLechePorProveedorQuincena(codigoProveedor, quincena);
+    public ResponseEntity<LaboratorioLecheEntity> getByProveedorQuincena(@RequestParam("codigoProveedor") String codigoProveedor,
+                                                                         @RequestParam("year") Integer year,
+                                                                         @RequestParam("mes") Integer mes,
+                                                                         @RequestParam("quincena") Integer numero) {
+        Quincena quincena = new Quincena(year, mes, numero);
+        LaboratorioLecheEntity laboratorioLeche = laboratorioLecheService.obtenerLaboratorioLechePorProveedorQuincena(codigoProveedor, quincena.toString());
         return ResponseEntity.ok(laboratorioLeche);
     }
 
-    @GetMapping("/exists/byquincena/{quincena}")
-    public ResponseEntity<Boolean> existsByQuincena(@PathVariable("quincena") String quincena){
-        Boolean exists = laboratorioLecheService.existeLaboratorioLechePorQuincena(quincena);
+    @GetMapping("/exists/byquincena")
+    public ResponseEntity<Boolean> existsByQuincena(@RequestParam("year") Integer year,
+                                                    @RequestParam("mes") Integer mes,
+                                                    @RequestParam("quincena") Integer numero){
+        Quincena quincena = new Quincena(year, mes, numero);
+        Boolean exists = laboratorioLecheService.existeLaboratorioLechePorQuincena(quincena.toString());
         return ResponseEntity.ok(exists);
     }
 }

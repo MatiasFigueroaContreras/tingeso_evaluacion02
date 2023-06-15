@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import tingeso.pagoservice.models.Proveedor;
 
 @Entity
 @Table(name="pago")
@@ -27,6 +28,8 @@ public class PagoEntity {
     private String quincena;
     @ManyToOne
     private DatosCentroAcopioEntity datosCentroAcopio;
+    @Transient
+    private Proveedor proveedor;
 
     public Integer getPagoAcopioLeche(){
         return pagoLeche + pagoGrasa + pagoSolidoTotal + bonificacionFrecuencia;

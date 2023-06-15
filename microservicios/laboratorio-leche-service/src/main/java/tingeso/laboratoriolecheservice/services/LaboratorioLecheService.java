@@ -10,13 +10,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 import tingeso.laboratoriolecheservice.entities.LaboratorioLecheEntity;
+import tingeso.laboratoriolecheservice.models.Quincena;
 import tingeso.laboratoriolecheservice.repositories.LaboratorioLecheRepository;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class LaboratorioLecheService {
@@ -25,18 +23,26 @@ public class LaboratorioLecheService {
     @Autowired
     RestTemplate restTemplate;
 
+    public LaboratorioLecheEntity getById(String id) {
+        Optional<LaboratorioLecheEntity> laboratorioLeche = laboratorioLecheRepository.findById(id);
+        if(!laboratorioLeche.isPresent()) {
+            throw new IllegalArgumentException("No existen los datos de laboratorio de leche");
+        }
+        return laboratorioLeche.get();
+    }
+
     public void guardarDatosLaboratorioLeche(LaboratorioLecheEntity laboratorioLeche) {
         String codigoProveedor = laboratorioLeche.getCodigoProveedor();
-        String quincena = laboratorioLeche.getQuincena().toString();
+        String quincena = laboratorioLeche.getQuincena();
         String id = codigoProveedor + "-" + quincena;
         laboratorioLeche.setId(id);
         laboratorioLecheRepository.save(laboratorioLeche);
     }
 
     public void guardarListaDatosLaboratorioLeche(List<LaboratorioLecheEntity> laboratorioLecheList, String quincena) {
-        for (LaboratorioLecheEntity grasaSolidoTotal : laboratorioLecheList) {
-            grasaSolidoTotal.setQuincena(quincena);
-            guardarDatosLaboratorioLeche(grasaSolidoTotal);
+        for (LaboratorioLecheEntity laboratorioLeche : laboratorioLecheList) {
+            laboratorioLeche.setQuincena(quincena);
+            guardarDatosLaboratorioLeche(laboratorioLeche);
         }
     }
 
@@ -108,7 +114,7 @@ public class LaboratorioLecheService {
                 setValueByCell(laboratorioLeche, cell, iCell);
                 iCell++;
             }
-            if (iCell == 4) {
+            if (iCell == 3) {
                 laboratorioLecheList.add(laboratorioLeche);
             }
         }
@@ -141,5 +147,10 @@ public class LaboratorioLecheService {
             int codigo = (int) cell.getNumericCellValue();
             return Integer.toString(codigo);
         }
+    }
+
+    public boolean existenPagosPorQuincena(Quincena quincena) {
+        Map<String, String> params = quincena.toMap();
+        return restTemplate.getForObject("http://pago-service/pagos/exists/byquincena?year={year}&mes={mes}&quincena={quincena}", Boolean.class, params);
     }
 }

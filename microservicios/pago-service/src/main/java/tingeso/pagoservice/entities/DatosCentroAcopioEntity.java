@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import tingeso.pagoservice.models.LaboratorioLeche;
+import tingeso.pagoservice.models.Proveedor;
 
 @Entity
 @Table(name="datos_centro_acopio")
@@ -26,6 +28,10 @@ public class DatosCentroAcopioEntity {
     private String idLaboratorioLeche;
     private String codigoProveedor;
     private String quincena;
+    @Transient
+    private LaboratorioLeche laboratorioLeche;
+    @Transient
+    private Proveedor proveedor;
 
     public Integer getTotalDias(){
         return diasEnvioMyT + diasEnvioM + diasEnvioT;

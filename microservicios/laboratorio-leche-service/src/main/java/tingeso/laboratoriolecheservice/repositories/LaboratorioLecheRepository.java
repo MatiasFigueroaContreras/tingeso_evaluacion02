@@ -7,7 +7,7 @@ import tingeso.laboratoriolecheservice.entities.LaboratorioLecheEntity;
 import java.util.Optional;
 
 @Repository
-public interface LaboratorioLecheRepository extends JpaRepository<LaboratorioLecheEntity, Integer> {
+public interface LaboratorioLecheRepository extends JpaRepository<LaboratorioLecheEntity, String> {
     Optional<LaboratorioLecheEntity> findByCodigoProveedorAndQuincena(String codigoProveedor, String quincena);
     boolean existsByQuincena(String quincena);
 }
