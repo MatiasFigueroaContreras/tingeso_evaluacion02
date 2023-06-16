@@ -1,0 +1,128 @@
+.navbar {
+    background-color: #120D0E;
+    height: 10vh;
+    padding: 0 10vw;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    margin-bottom: 4vh;
+}
+
+.navbar a {
+    color: white;
+    font-size: 18px;
+    font-weight: 500;
+    cursor: pointer;
+    text-decoration: none;
+    width: 168px;
+    text-align: center;
+    box-sizing: border-box;
+    margin-top: 7px;
+}
+
+.navbar a:after {
+    display: flex;
+    justify-self: center;
+    content: "";
+    width: 0;
+    height: 2px;
+    margin: 5px auto 0 auto;
+    transform: scale(0);
+    transition: all 0.3s ease;
+}
+
+.navbar a:hover::after,
+.dropdown .dropdown-header:hover a::after {
+    width: 60%;
+    background-color: white;
+    transform: scale(1);
+}
+
+.dropdown {
+    display: inline-block;
+}
+
+.dropdown-header {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.dropdown-header a {
+    width: auto;
+    max-width: 146px;
+}
+
+.dropdown-content {
+    list-style: none;
+    display: none;
+    position: absolute;
+    background-color: #120D0E;
+    min-width: 180px;
+    border-radius: 6px;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.5);
+    padding: 16px 18px 4px 12px;
+    z-index: 1;
+}
+
+.dropdown-content li {
+    margin-bottom: 14px;
+}
+
+.dropdown-content li a {
+    display: flex;
+    width: 100%;
+    font-size: 15px !important;
+}
+
+.dropdown-content li a:after {
+    display: none;
+}
+
+.dropdown-content li a:before {
+    display: block;
+    content: "";
+    width: 2px;
+    height: 0;
+    margin-right: 5px;
+    transform: scale(0);
+    transition: all 0.3s ease;
+}
+
+.dropdown-content li a:hover::before {
+    height: 16px;
+    align-self: center;
+    background-color: white;
+    transform: scale(1);
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+.navbar .link-active {
+    color: #FFCBA6;
+}
+
+.navbar .link-active:hover::after,
+.dropdown .dropdown-header:hover .link-active::after {
+    background-color: #FFCBA6;
+}
+
+.dropdown-content li .link-active:hover::before {
+    background-color: #FFCBA6;
+}
+
+.svg-active {
+    fill: #FFCBA6;
+}
+
+.navbar .logo {
+    color: #FFCBA6;
+    font-family: 'Norican';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 42px;
+    text-shadow: 0px 3px 3px rgba(226, 113, 32, 0.60);
+    cursor: default;
+}

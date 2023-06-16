@@ -1,0 +1,12 @@
+.form {
+    margin-top: 2vh;
+    display: grid;
+    width: 560px;
+    gap: 28px;
+}
+
+.form .selects {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+}
