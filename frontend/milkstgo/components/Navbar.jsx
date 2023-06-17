@@ -80,7 +80,7 @@ export default function Navbar() {
                 <div className="dropdown-header">
                     <a
                         className={
-                            pathname == "/acopio-leches/importar" ||
+                            pathname == "/acopio-leche/importar" ||
                             pathname == "/laboratorio-leche/importar"
                                 ? "link-active"
                                 : ""
@@ -95,7 +95,7 @@ export default function Navbar() {
                         width="26px"
                         fill="#FFFFFF"
                         className={
-                            pathname == "/acopio-leches/importar" ||
+                            pathname == "/acopio-leche/importar" ||
                             pathname == "/laboratorio-leche/importar"
                                 ? "svg-active"
                                 : ""
@@ -107,9 +107,9 @@ export default function Navbar() {
                 <ul className="dropdown-content">
                     <li>
                         <Link
-                            href="/acopio-leches/importar"
+                            href="/acopio-leche/importar"
                             className={
-                                pathname == "/acopio-leches/importar"
+                                pathname == "/acopio-leche/importar"
                                     ? "link-active"
                                     : ""
                             }

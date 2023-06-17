@@ -11,7 +11,7 @@ import tingeso.acopiolecheservice.services.AcopioLecheService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/acopio-leches")
+@RequestMapping("/acopio-leche")
 public class AcopioLecheController {
     @Autowired
     AcopioLecheService acopioLecheService;

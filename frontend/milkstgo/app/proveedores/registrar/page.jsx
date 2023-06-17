@@ -16,6 +16,7 @@ export default function RegisterPage() {
 
     const categorias = ["A", "B", "C", "D"];
     const retenciones = ["Si", "No"];
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {

@@ -18,6 +18,7 @@ body {
 
 .button-style {
     justify-self: center;
+    align-self: center;
     background: #E27120;
     border-radius: 20px;
     border: none;
