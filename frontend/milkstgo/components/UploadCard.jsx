@@ -8,7 +8,7 @@ import SelectQuincena from "./SelectQuincena";
 function UploadZone({ onFileUpload }) {
     const [dragOver, setDragOver] = useState(false);
     const [fileName, setFileName] = useState("");
-    const [uploadedFiles, setUploadedFiles] = useState(null)
+    const [uploadedFiles, setUploadedFiles] = useState(null);
     const fileRef = useRef(null);
 
     const handleDragOver = (e) => {
@@ -27,7 +27,7 @@ function UploadZone({ onFileUpload }) {
         e.preventDefault();
         if (e.dataTransfer.files.length) {
             const files = e.dataTransfer.files;
-            const file = files[0]
+            const file = files[0];
             fileRef.current.files = files;
             setFileName(file.name);
             setUploadedFiles(files);
@@ -37,17 +37,15 @@ function UploadZone({ onFileUpload }) {
 
     const handleInputChange = (e) => {
         const files = e.target.files;
-        const file = files[0]
-        if(file) {
+        const file = files[0];
+        if (file) {
             setFileName(file.name);
             setDragOver(true);
             setUploadedFiles(files);
             onFileUpload(file);
-        }
-        else if(uploadedFiles) {
+        } else if (uploadedFiles) {
             fileRef.current.files = uploadedFiles;
         }
-        
     };
 
     return (
@@ -98,7 +96,7 @@ export default function UploadCard({ title, startYear, onSubmit }) {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        onSubmit(data)
+        onSubmit(data);
     };
 
     const handleQuincenaChange = (year, month, fortnight) => {

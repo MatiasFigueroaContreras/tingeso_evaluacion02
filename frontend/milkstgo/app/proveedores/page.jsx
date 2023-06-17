@@ -1,9 +1,9 @@
 "use client";
 
+import { useState, useEffect, Suspense } from "react";
 import ProveedoresTable from "@/components/ProveedoresTable";
 import Title from "@/components/Title";
 import ProveedorService from "@/services/ProveedorService";
-import { useState, useEffect, Suspense } from "react";
 import Loading from "./loading";
 
 export default function ProveedoresPage() {
@@ -13,7 +13,9 @@ export default function ProveedoresPage() {
         const fetchProveedores = async () => {
             try {
                 const response = await ProveedorService.getAll();
-                setProveedores(response.data);
+                if(response.data) {
+                    setProveedores(response.data);
+                }
             } catch (error) {
                 console.log(error);
                 setProveedores([]);

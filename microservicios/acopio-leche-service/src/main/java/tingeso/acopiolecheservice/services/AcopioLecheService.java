@@ -28,7 +28,7 @@ public class AcopioLecheService {
     public void guardarAcopioLeche(AcopioLecheEntity acopioLeche) {
         String codigoProveedor = acopioLeche.getCodigoProveedor();
         DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
-        String fecha = dateFormat.format(acopioLeche.getFecha());
+        String fecha = dateFormat.format(acopioLeche.getFecha()).replace("/", "_");
         String turno = acopioLeche.getTurno();
         String id = codigoProveedor + "-" + fecha + "-" + turno;
         acopioLeche.setId(id);
@@ -42,12 +42,10 @@ public class AcopioLecheService {
     }
 
     public List<AcopioLecheEntity> obtenerAcopiosLechePorProveedorQuincena(String codigoProveedor, String quincena) {
-        // Revisar
         return acopioLecheRepository.findAllByCodigoProveedorAndQuincena(codigoProveedor, quincena);
     }
 
     public boolean existenAcopiosLechePorQuincena(String quincena) {
-        // Revisar
         return acopioLecheRepository.existsByQuincena(quincena);
     }
 
@@ -118,6 +116,12 @@ public class AcopioLecheService {
             if (iCell == 4) {
                 acopiosLeche.add(acopioLeche);
             }
+        }
+
+        try {
+            workBook.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
         return acopiosLeche;

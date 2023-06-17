@@ -73,8 +73,9 @@ export default function SelectQuincena({ startYear, onChange }) {
             if (finalMonth <= month) {
                 setMonth(finalMonth);
                 setFortnightOptions(currentFortnightOptions);
+                onChange(yearSelected, finalMonth, fortnight);
+                return
             }
-
         } else {
             setMonthOptions(standardMonthOptions);
             setFortnightOptions(standardFortnightsOptions)
@@ -89,12 +90,13 @@ export default function SelectQuincena({ startYear, onChange }) {
         if (monthSelected == finalMonth && year == currentYear) {
             setFortnightOptions(currentFortnightOptions);
             setFortnight(finalFortnight);
+            onChange(year, monthSelected, finalFortnight);
         } else {
             setFortnightOptions(standardFortnightsOptions);
+            onChange(year, monthSelected, fortnight);
         }
 
         setMonth(monthSelected);
-        onChange(year, monthSelected, fortnight);
     };
 
     const handleFortnightChange = (e) => {

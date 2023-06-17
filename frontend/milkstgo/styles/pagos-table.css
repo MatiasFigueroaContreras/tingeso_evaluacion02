@@ -1,0 +1,71 @@
+.pagos-table {
+    border-radius: 12px;
+    border-collapse: collapse;
+    overflow: hidden;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    font-size: 15px;
+    margin: 2vh 30px 6vh 30px;
+}
+
+.pagos-table thead {
+    background-color: #E27120;
+    color: white;
+    border-bottom: 1px solid #ABABAB;
+    font-weight: 400;
+    text-align: left;
+}
+
+.pagos-table .first-header {
+    background-color: #E1813B;
+}
+
+.pagos-table .first-header th:not(:first-child) {
+    border-left: 1px solid rgb(194, 194, 194);
+    padding: 8px 8px;
+}
+
+.pagos-table .second-header .border-left {
+    border-left: 1px solid rgb(194, 194, 194);
+}
+
+.pagos-table .first-header th {
+    padding: 8px 8px;
+}
+
+.pagos-table .max-1 {
+    max-width: 65px;
+}
+
+.pagos-table .max-2 {
+    max-width: 100px;
+}
+
+.pagos-table th,
+td {
+    font-weight: 500;
+    padding: 18px 9px;
+}
+
+.pagos-table td {
+    border: 1px inset #ABABAB;
+}
+
+.pagos-table td:first-child {
+    border-left: none;
+}
+
+.pagos-table td:last-child {
+    border-right: none;
+}
+
+.pagos-table tbody tr {
+    font-weight: 500;
+}
+
+.pagos-table tbody tr td {
+    padding: 18px 9px;
+}
+
+.pagos-table tbody tr:nth-of-type(even) {
+    background-color: #F3F3F3;
+}

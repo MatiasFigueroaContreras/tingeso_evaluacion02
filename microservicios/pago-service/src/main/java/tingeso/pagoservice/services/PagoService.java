@@ -2,9 +2,14 @@ package tingeso.pagoservice.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
+
 import tingeso.pagoservice.entities.DatosCentroAcopioEntity;
 import tingeso.pagoservice.entities.PagoEntity;
+import tingeso.pagoservice.models.LaboratorioLeche;
 import tingeso.pagoservice.models.Proveedor;
+import tingeso.pagoservice.models.Quincena;
 import tingeso.pagoservice.repositories.PagoRepository;
 
 import java.util.ArrayList;
@@ -15,6 +20,11 @@ import java.util.List;
 public class PagoService {
     @Autowired
     PagoRepository pagoRepository;
+    @Autowired
+    RestTemplate restTemplate;
+
+    static String LABORATORIO_LECHE_URL = "http://laboratorio-leche-service/laboratorio-leche";
+    static String PROVEEDORES_URL = "http://proveedor-service/proveedores";
     static HashMap<String, Integer> PAGO_POR_KLS_LECHE = new HashMap<>();
     static Double RETENCION = 0.13;
     static Integer PAGA_RETENCION = 950000;
@@ -27,11 +37,33 @@ public class PagoService {
     }
 
     public List<PagoEntity> obtenerPagos() {
-        return pagoRepository.findAllByOrderByQuincenaDescCodigoProveedorAsc();
+        List<PagoEntity> pagos = pagoRepository.findAllByOrderByQuincenaDescCodigoProveedorAsc();
+        for (PagoEntity pago : pagos) {
+            Proveedor proveedor = restTemplate.getForObject(PROVEEDORES_URL + "/" + pago.getCodigoProveedor(),
+                    Proveedor.class);
+            pago.setProveedor(proveedor);
+            DatosCentroAcopioEntity datosCA = pago.getDatosCentroAcopio();
+            LaboratorioLeche laboratorioLeche = restTemplate.getForObject(
+                    LABORATORIO_LECHE_URL + "/" + datosCA.getIdLaboratorioLeche(), LaboratorioLeche.class);
+            datosCA.setLaboratorioLeche(laboratorioLeche);
+        }
+
+        return pagos;
     }
 
     public List<PagoEntity> obtenerPagosPorQuincena(String quincena) {
-        return pagoRepository.findAllByQuincena(quincena);
+        List<PagoEntity> pagos = pagoRepository.findAllByQuincena(quincena);
+        for (PagoEntity pago : pagos) {
+            Proveedor proveedor = restTemplate.getForObject(PROVEEDORES_URL + "/" + pago.getCodigoProveedor(),
+                    Proveedor.class);
+            pago.setProveedor(proveedor);
+            DatosCentroAcopioEntity datosCA = pago.getDatosCentroAcopio();
+            LaboratorioLeche laboratorioLeche = restTemplate.getForObject(
+                    LABORATORIO_LECHE_URL + "/" + datosCA.getIdLaboratorioLeche(), LaboratorioLeche.class);
+            datosCA.setLaboratorioLeche(laboratorioLeche);
+        }
+
+        return pagos;
     }
 
     public boolean existenPagosPorQuincena(String quincena) {
@@ -39,7 +71,8 @@ public class PagoService {
     }
 
     public void guardarPago(PagoEntity pago) {
-        pago.setId(pago.getCodigoProveedor() + "-" + pago.getQuincena());
+        Quincena quincena = Quincena.stringToQuincena(pago.getQuincena());
+        pago.setId(pago.getCodigoProveedor() + "-" + quincena.toStringCustom("_"));
         pagoRepository.save(pago);
     }
 
@@ -160,7 +193,8 @@ public class PagoService {
         return descuento;
     }
 
-    public Integer calcularDctoVariacionSolidoTotal(DatosCentroAcopioEntity datosCentroAcopio, Integer pagoAcopioLeche) {
+    public Integer calcularDctoVariacionSolidoTotal(DatosCentroAcopioEntity datosCentroAcopio,
+            Integer pagoAcopioLeche) {
         Integer variacionNegativaSolidoTotal = datosCentroAcopio.getVariacionSolidoTotal() * -1;
         Integer descuento = 0;
 

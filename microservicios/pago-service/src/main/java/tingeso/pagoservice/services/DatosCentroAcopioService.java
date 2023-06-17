@@ -19,13 +19,15 @@ public class DatosCentroAcopioService {
     DatosCentroAcopioRepository datosCentroAcopioRepository;
     @Autowired
     RestTemplate restTemplate;
+
     String LABORATORIO_LECHE_URL = "http://laboratorio-leche-service/laboratorio-leche";
     String PROVEEDORES_URL = "http://proveedor-service/proveedores";
-    String ACOPIO_LECHE_URL = "http://acopio-leche-service/acopio-leches";
+    String ACOPIO_LECHE_URL = "http://acopio-leche-service/acopio-leche";
 
 
     public void guardarDatosCA(DatosCentroAcopioEntity datosCentroAcopio) {
-        String id = datosCentroAcopio.getCodigoProveedor() + "-" + datosCentroAcopio.getQuincena().toString();
+        Quincena quincena = Quincena.stringToQuincena(datosCentroAcopio.getQuincena());
+        String id = datosCentroAcopio.getCodigoProveedor() + "-" + quincena.toStringCustom("_");
         datosCentroAcopio.setId(id);
         datosCentroAcopioRepository.save(datosCentroAcopio);
     }

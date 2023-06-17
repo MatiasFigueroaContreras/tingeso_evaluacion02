@@ -29,9 +29,9 @@ export default function RegisterPage() {
             // Cambiar
             console.log(response);
             alert("Proveedor registrado correctamente!");
-        } catch (e) {
+        } catch (error) {
             // Cambiar
-            console.log(e);
+            console.log(error);
         }
     };
 

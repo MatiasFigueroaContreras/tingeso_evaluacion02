@@ -19,11 +19,23 @@ public class Quincena {
     }
 
     public String toString(){
+       return toStringCustom("/");
+    }
+
+    public String toStringCustom(String sep) {
         String mesFormateado = mes.toString();
         if(mesFormateado.length() == 1){
             mesFormateado = "0" + mesFormateado;
         }
-        return year.toString() + "/" + mesFormateado + "/" + numero.toString();
+        return year.toString() + sep + mesFormateado + sep + numero.toString();
+    }
+
+    public static Quincena stringToQuincena(String quincena){
+        String[] quincenaString = quincena.split("/");
+        Integer year = Integer.parseInt(quincenaString[0]);
+        Integer mes = Integer.parseInt(quincenaString[1]);
+        Integer numero = Integer.parseInt(quincenaString[2]);
+        return new Quincena(year, mes, numero);
     }
 
     public Map<String, String> toMap(){

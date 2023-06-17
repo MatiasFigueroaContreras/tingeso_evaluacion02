@@ -33,8 +33,8 @@ public class LaboratorioLecheService {
 
     public void guardarDatosLaboratorioLeche(LaboratorioLecheEntity laboratorioLeche) {
         String codigoProveedor = laboratorioLeche.getCodigoProveedor();
-        String quincena = laboratorioLeche.getQuincena();
-        String id = codigoProveedor + "-" + quincena;
+        Quincena quincena = Quincena.stringToQuincena(laboratorioLeche.getQuincena());
+        String id = codigoProveedor + "-" + quincena.toStringCustom("_");
         laboratorioLeche.setId(id);
         laboratorioLecheRepository.save(laboratorioLeche);
     }
@@ -117,6 +117,12 @@ public class LaboratorioLecheService {
             if (iCell == 3) {
                 laboratorioLecheList.add(laboratorioLeche);
             }
+        }
+
+        try {
+            workbook.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
         return laboratorioLecheList;

@@ -7,8 +7,8 @@ export default function ProveedoresTable({proveedores = []}) {
                 <tr>
                     <th>Código</th>
                     <th>Nombre</th>
-                    <th className="max">Categoría</th>
-                    <th className="max">Afecto a Retención</th>
+                    <th>Categoría</th>
+                    <th>Afecto a Retención</th>
                 </tr>
             </thead>
             <tbody>

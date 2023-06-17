@@ -29,6 +29,8 @@ public class DatosCentroAcopioEntity {
     private String codigoProveedor;
     private String quincena;
     @Transient
+    private Integer promedioKlsPorDia;
+    @Transient
     private LaboratorioLeche laboratorioLeche;
     @Transient
     private Proveedor proveedor;
