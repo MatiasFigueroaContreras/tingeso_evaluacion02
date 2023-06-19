@@ -1,6 +1,6 @@
 import "@/styles/proveedores-table.css"
 
-export default function ProveedoresTable({proveedores = []}) {
+export default function ProveedoresTable({proveedores}) {
     return (
         <table className="proveedores-table">
             <thead>

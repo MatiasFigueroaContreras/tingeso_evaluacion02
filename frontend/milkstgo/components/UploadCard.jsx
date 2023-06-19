@@ -86,7 +86,7 @@ function UploadZone({ onFileUpload }) {
     );
 }
 
-export default function UploadCard({ title, startYear, onSubmit }) {
+export default function UploadCard({ title, startYear, onSubmit, isSubmitting }) {
     const [data, setData] = useState({
         file: null,
         year: null,
@@ -134,7 +134,11 @@ export default function UploadCard({ title, startYear, onSubmit }) {
                     handleDataChange({ file: uploadedFile })
                 }
             />
-            <button className="button-style" type="submit">
+            <button
+                className="button-style"
+                type="submit"
+                disabled={isSubmitting}
+            >
                 Subir archivo
             </button>
         </form>

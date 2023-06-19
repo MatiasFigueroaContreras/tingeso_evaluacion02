@@ -72,6 +72,7 @@
     height: 410px;
     border-radius: 15px;
     z-index: -1;
+    animation: none;
 }
 
 .upload-zone .label {

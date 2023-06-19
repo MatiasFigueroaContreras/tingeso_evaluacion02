@@ -6,6 +6,8 @@ import Title from "@/components/Title";
 import InputField from "@/components/InputField";
 import SelectField from "@/components/SelectField";
 import ProveedorService from "@/services/ProveedorService";
+import FeedbackAlert from "@/components/FeedbackAlert";
+import { feedbackTypes } from "@/components/FeedbackAlert";
 import { useState } from "react";
 
 export default function RegisterPage() {
@@ -14,30 +16,48 @@ export default function RegisterPage() {
     const [categoria, setCategoria] = useState("");
     const [retencion, setRetencion] = useState("");
 
+    const [feedback, setFeedback] = useState("");
+    const [alertType, setAlertType] = useState("");
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
     const categorias = ["A", "B", "C", "D"];
     const retenciones = ["Si", "No"];
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setIsSubmitting(true);
+        setFeedback("");
         try {
-            const response = await ProveedorService.create(
-                codigo,
-                nombre,
-                categoria,
-                retencion
-            );
-            // Cambiar
-            console.log(response);
-            alert("Proveedor registrado correctamente!");
+            await ProveedorService.create(codigo, nombre, categoria, retencion);
+            setTimeout(() => {
+                setFeedback("Proveedor registrado correctamente!");
+                setIsSubmitting(false);
+            }, 500);
+            setAlertType(feedbackTypes.Success);
         } catch (error) {
-            // Cambiar
-            console.log(error);
+            setAlertType(feedbackTypes.Error);
+            if (error.response.status >= 500) {
+                setTimeout(() => {
+                    setFeedback(
+                        "Ocurrió un error al intentar registrar el proveedor"
+                    );
+                    setIsSubmitting(false);
+                }, 500);
+            } else {
+                setTimeout(() => {
+                    setFeedback(error.response.data);
+                    setIsSubmitting(false);
+                }, 500);
+            }
         }
     };
 
     return (
         <>
             <Title title="Registro de Proveedor" />
+            {feedback ? (
+                <FeedbackAlert feedback={feedback} type={alertType} />
+            ) : null}
             <form onSubmit={handleSubmit} className="form">
                 <InputField
                     name="nombre"
@@ -67,7 +87,11 @@ export default function RegisterPage() {
                         onChange={(e) => setRetencion(e.target.value)}
                     />
                 </div>
-                <button className="button-style" type="submit">
+                <button
+                    className="button-style"
+                    type="submit"
+                    disabled={isSubmitting}
+                >
                     Registrar
                 </button>
             </form>

@@ -1,3 +1,5 @@
+import LoadingTableSkeleton from "@/components/LoadingTableSkeleton";
+
 export default function Loading() {
-    return <h2>Loading ...</h2>;
+    return <LoadingTableSkeleton nrows={6} cellsWidth={[140, 300, 140, 200]} cellsWidthMeasure="px" />;
 }
