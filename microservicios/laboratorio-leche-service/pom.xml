@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>tingeso</groupId>
 	<artifactId>laboratorio-leche-service</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1</version>
 	<name>laboratorio-leche-service</name>
 	<description>Demo project for Spring Boot</description>
 	<properties>
