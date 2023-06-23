@@ -1,0 +1,194 @@
+# Config Service
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: config-service-deployment
+    labels:
+        app: config-service
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+            app: config-service
+    template:
+        metadata:
+            labels:
+                app: config-service
+        spec:
+            containers:
+                - name: config-service
+                  image: matiasfc/tingeso2_config_service:latest
+                  ports:
+                      - containerPort: 8081
+
+---
+# Eureka Service
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: eureka-service-deployment
+    labels:
+        app: eureka-service
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+            app: eureka-service
+    template:
+        metadata:
+            labels:
+                app: eureka-service
+        spec:
+            containers:
+                - name: eureka-service
+                  image: matiasfc/tingeso2_eureka_service:latest
+                  ports:
+                      - containerPort: 8761
+
+---
+# Gateway Service
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: gateway-service-deployment
+    labels:
+        app: gateway-service
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+            app: gateway-service
+    template:
+        metadata:
+            labels:
+                app: gateway-service
+        spec:
+            containers:
+                - name: gateway-service
+                  image: matiasfc/tingeso2_gateway_service:latest
+                  ports:
+                      - containerPort: 8080
+
+---
+# Proveedor Service
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: proveedor-service-deployment
+    labels:
+        app: proveedor-service
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+            app: proveedor-service
+    template:
+        metadata:
+            labels:
+                app: proveedor-service
+        spec:
+            containers:
+                - name: proveedor-service
+                  image: matiasfc/tingeso2_proveedor_service:latest
+            env:
+                - name: DB_HOST
+                  value: proveedor-db-host
+                - name: DB_NAME
+                  value: proveedoresdb
+                - name: DB_USERNAME
+                  value: tingeso
+                - name: DB_PASSWORD
+                  value: tingeso
+
+---
+# Acopio Leche Service
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: acopio-leche-service-deployment
+    labels:
+        app: acopio-leche-service
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+            app: acopio-leche-service
+    template:
+        metadata:
+            labels:
+                app: acopio-leche-service
+        spec:
+            containers:
+                - name: acopio-leche-service
+                  image: matiasfc/tingeso2_acopio_leche_service:latest
+            env:
+                - name: DB_HOST
+                  value: acopio-leche-db-host
+                - name: DB_NAME
+                  value: acopio_lechedb
+                - name: DB_USERNAME
+                  value: tingeso
+                - name: DB_PASSWORD
+                  value: tingeso
+
+---
+# Laboratorio Leche Service
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: laboratorio-leche-service-deployment
+    labels:
+        app: laboratorio-leche-service
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+            app: laboratorio-leche-service
+    template:
+        metadata:
+            labels:
+                app: laboratorio-leche-service
+        spec:
+            containers:
+                - name: laboratorio-leche-service
+                  image: matiasfc/tingeso2_laboratorio_leche_service:latest
+            env:
+                - name: DB_HOST
+                  value: laboratorio-leche-db-host
+                - name: DB_NAME
+                  value: laboratorio_lechedb
+                - name: DB_USERNAME
+                  value: tingeso
+                - name: DB_PASSWORD
+                  value: tingeso
+
+---
+# Pago Service
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: pago-service-deployment
+    labels:
+        app: pago-service
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+            app: pago-service
+    template:
+        metadata:
+            labels:
+                app: pago-service
+        spec:
+            containers:
+                - name: pago-service
+                  image: matiasfc/tingeso2_pago_service:latest
+           env:
+                - name: DB_HOST
+                  value: pago-db-host
+                - name: DB_NAME
+                  value: pagosdb
+                - name: DB_USERNAME
+                  value: tingeso
+                - name: DB_PASSWORD
+                  value: tingeso

@@ -1,0 +1,165 @@
+# Proveedores DB
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: proveedor-postgresdb
+spec:
+  serviceName: proveedor-db-host
+  replicas: 1
+  selector:
+    matchLabels:
+      app: proveedor-postgresdb
+  template:
+    metadata:
+      labels:
+        app: proveedor-postgresdb
+    spec:
+      containers:
+        - name: database
+          image: postgres:latest
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_DB
+              value: proveedoresdb
+            - name: POSTGRES_USER
+              value: tingeso
+            - name: POSTGRES_PASSWORD
+              value: tingeso
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/postgresql/data
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: 
+          - "ReadWriteOnce"
+        resources:
+          requests:
+            storage: 2Mi
+
+---
+# Acopio Leche DB
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: acopio-leche-postgresdb
+spec:
+  serviceName: acopio-leche-db-host
+  replicas: 1
+  selector:
+    matchLabels:
+      app: acopio-leche-postgresdb
+  template:
+    metadata:
+      labels:
+        app: acopio-leche-postgresdb
+    spec:
+      containers:
+        - name: database
+          image: postgres:latest
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_DB
+              value: acopio_lechedb
+            - name: POSTGRES_USER
+              value: tingeso
+            - name: POSTGRES_PASSWORD
+              value: tingeso
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/postgresql/data
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: 
+          - "ReadWriteOnce"
+        resources:
+          requests:
+            storage: 2Mi
+
+---
+# Laboratorio DB
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: laboratorio-leche-postgresdb
+spec:
+  serviceName: laboratorio-leche-db-host
+  replicas: 1
+  selector:
+    matchLabels:
+      app: laboratorio-leche-postgresdb
+  template:
+    metadata:
+      labels:
+        app: laboratorio-leche-postgresdb
+    spec:
+      containers:
+        - name: database
+          image: postgres:latest
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_DB
+              value: laboratorio_lechedb
+            - name: POSTGRES_USER
+              value: tingeso
+            - name: POSTGRES_PASSWORD
+              value: tingeso
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/postgresql/data
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: 
+          - "ReadWriteOnce"
+        resources:
+          requests:
+            storage: 2Mi
+
+# Pago DB
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: pago-postgresdb
+spec:
+  serviceName: pago-db-host
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pago-postgresdb
+  template:
+    metadata:
+      labels:
+        app: pago-postgresdb
+    spec:
+      containers:
+        - name: database
+          image: postgres:latest
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_DB
+              value: pagosdb
+            - name: POSTGRES_USER
+              value: tingeso
+            - name: POSTGRES_PASSWORD
+              value: tingeso
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/postgresql/data
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: 
+          - "ReadWriteOnce"
+        resources:
+          requests:
+            storage: 2Mi

@@ -1,0 +1,43 @@
+# Servicio de Config Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: config-service-expose
+spec:
+  type: NodePort
+  selector:
+    app: config-service
+  ports:
+    - protocol: TCP
+      port: 8081
+      targetPort: 8081
+
+---
+# Servicio de Eureka Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: eureka-service-expose
+spec:
+  type: NodePort
+  selector:
+    app: eureka-service
+  ports:
+    - protocol: TCP
+      port: 8761
+      targetPort: 8761
+
+---
+# Servicio de Gateway Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: gateway-service-expose
+spec:
+  type: LoadBalancer
+  selector:
+    app: gateway-service
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
