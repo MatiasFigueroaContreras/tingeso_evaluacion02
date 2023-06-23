@@ -123,6 +123,7 @@ spec:
           requests:
             storage: 2Mi
 
+---
 # Pago DB
 apiVersion: apps/v1
 kind: StatefulSet

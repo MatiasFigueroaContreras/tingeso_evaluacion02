@@ -1,27 +1,3 @@
-# Config Service
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-    name: config-service-deployment
-    labels:
-        app: config-service
-spec:
-    replicas: 1
-    selector:
-        matchLabels:
-            app: config-service
-    template:
-        metadata:
-            labels:
-                app: config-service
-        spec:
-            containers:
-                - name: config-service
-                  image: matiasfc/tingeso2_config_service:latest
-                  ports:
-                      - containerPort: 8081
-
----
 # Eureka Service
 apiVersion: apps/v1
 kind: Deployment
@@ -44,6 +20,9 @@ spec:
                   image: matiasfc/tingeso2_eureka_service:latest
                   ports:
                       - containerPort: 8761
+                  env:
+                    - name: SPRING_CLOUD_CONFIG_URI
+                      value: http://config-service:8081
 
 ---
 # Gateway Service
@@ -68,7 +47,13 @@ spec:
                   image: matiasfc/tingeso2_gateway_service:latest
                   ports:
                       - containerPort: 8080
-
+                  env:
+                    - name: SPRING_CLOUD_CONFIG_URI
+                      value: http://config-service:8081
+                    - name: EUREKA_DEFAULT_ZONE
+                      value: http://eureka-service:8761/eureka
+                    - name: EUREKA_INSTANCE_NAME
+                      value: eureka-service
 ---
 # Proveedor Service
 apiVersion: apps/v1
@@ -90,15 +75,17 @@ spec:
             containers:
                 - name: proveedor-service
                   image: matiasfc/tingeso2_proveedor_service:latest
-            env:
-                - name: DB_HOST
-                  value: proveedor-db-host
-                - name: DB_NAME
-                  value: proveedoresdb
-                - name: DB_USERNAME
-                  value: tingeso
-                - name: DB_PASSWORD
-                  value: tingeso
+                  env:
+                    - name: DB_HOST
+                      value: proveedor-db-host:5432
+                    - name: DB_NAME
+                      value: proveedoresdb
+                    - name: DB_USERNAME
+                      value: tingeso
+                    - name: DB_PASSWORD
+                      value: tingeso
+                    - name: SPRING_CLOUD_CONFIG_URI
+                      value: http://config-service:8081
 
 ---
 # Acopio Leche Service
@@ -121,15 +108,17 @@ spec:
             containers:
                 - name: acopio-leche-service
                   image: matiasfc/tingeso2_acopio_leche_service:latest
-            env:
-                - name: DB_HOST
-                  value: acopio-leche-db-host
-                - name: DB_NAME
-                  value: acopio_lechedb
-                - name: DB_USERNAME
-                  value: tingeso
-                - name: DB_PASSWORD
-                  value: tingeso
+                  env:
+                    - name: DB_HOST
+                      value: acopio-leche-db-host
+                    - name: DB_NAME
+                      value: acopio_lechedb
+                    - name: DB_USERNAME
+                      value: tingeso
+                    - name: DB_PASSWORD
+                      value: tingeso
+                    - name: SPRING_CLOUD_CONFIG_URI
+                      value: http://config-service:8081
 
 ---
 # Laboratorio Leche Service
@@ -152,15 +141,17 @@ spec:
             containers:
                 - name: laboratorio-leche-service
                   image: matiasfc/tingeso2_laboratorio_leche_service:latest
-            env:
-                - name: DB_HOST
-                  value: laboratorio-leche-db-host
-                - name: DB_NAME
-                  value: laboratorio_lechedb
-                - name: DB_USERNAME
-                  value: tingeso
-                - name: DB_PASSWORD
-                  value: tingeso
+                  env:
+                    - name: DB_HOST
+                      value: laboratorio-leche-db-host
+                    - name: DB_NAME
+                      value: laboratorio_lechedb
+                    - name: DB_USERNAME
+                      value: tingeso
+                    - name: DB_PASSWORD
+                      value: tingeso
+                    - name: SPRING_CLOUD_CONFIG_URI
+                      value: http://config-service:8081
 
 ---
 # Pago Service
@@ -183,12 +174,14 @@ spec:
             containers:
                 - name: pago-service
                   image: matiasfc/tingeso2_pago_service:latest
-           env:
-                - name: DB_HOST
-                  value: pago-db-host
-                - name: DB_NAME
-                  value: pagosdb
-                - name: DB_USERNAME
-                  value: tingeso
-                - name: DB_PASSWORD
-                  value: tingeso
+                  env:
+                    - name: DB_HOST
+                      value: pago-db-host
+                    - name: DB_NAME
+                      value: pagosdb
+                    - name: DB_USERNAME
+                      value: tingeso
+                    - name: DB_PASSWORD
+                      value: tingeso
+                    - name: SPRING_CLOUD_CONFIG_URI
+                      value: http://config-service:8081
