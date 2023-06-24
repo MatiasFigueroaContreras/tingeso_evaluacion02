@@ -26,3 +26,55 @@ spec:
     - protocol: TCP
       port: 8080
       targetPort: 8080
+
+---
+# BD Proveedores
+apiVersion: v1
+kind: Service
+metadata:
+  name: proveedor-db-service
+spec:
+  selector:
+    app: proveedor-postgresdb
+  ports:   
+  - protocol: TCP
+    port: 5432
+
+---
+# BD Acopio Leche
+apiVersion: v1
+kind: Service
+metadata:
+  name: acopio-leche-db-service
+spec:
+  selector:
+    app: acopio-leche-postgresdb
+  ports:   
+  - protocol: TCP
+    port: 5432
+
+---
+# BD Laboratorio Leche
+apiVersion: v1
+kind: Service
+metadata:
+  name: laboratorio-leche-db-service
+spec:
+  selector:
+    app: laboratorio-leche-postgresdb
+  ports:   
+  - protocol: TCP
+    port: 5432
+
+---
+# BD Pagos
+apiVersion: v1
+kind: Service
+metadata:
+  name: pago-db-service
+spec:
+  selector:
+    app: pago-postgresdb
+  ports:   
+  - protocol: TCP
+    port: 5432
