@@ -36,7 +36,7 @@ export default function RegisterPage() {
             setAlertType(feedbackTypes.Success);
         } catch (error) {
             setAlertType(feedbackTypes.Error);
-            if (error.response.status >= 500) {
+            if (error.response === undefined || error.response.status >= 500) {
                 setTimeout(() => {
                     setFeedback(
                         "Ocurrió un error al intentar registrar el proveedor"

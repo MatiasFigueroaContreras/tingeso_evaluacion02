@@ -4,7 +4,7 @@ kind: Service
 metadata:
   name: eureka-service
 spec:
-  type: NodePort
+  type: LoadBalancer
   selector:
     app: eureka-service
   ports:
@@ -78,3 +78,55 @@ spec:
   ports:   
   - protocol: TCP
     port: 5432
+
+---
+# Proveedor Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: proveedor-service
+spec:
+  selector:
+    app: proveedor-service
+  ports:   
+  - protocol: TCP
+    port: 8001
+
+---
+# Acopio Leche Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: acopio-leche-service
+spec:
+  selector:
+    app: acopio-leche-service
+  ports:   
+  - protocol: TCP
+    port: 8002
+
+---
+# Laboratorio Leche Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: laboratorio-leche-service
+spec:
+  selector:
+    app: laboratorio-leche-service
+  ports:   
+  - protocol: TCP
+    port: 8003
+
+---
+# Pago Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: pago-service
+spec:
+  selector:
+    app: pago-service
+  ports:   
+  - protocol: TCP
+    port: 8004

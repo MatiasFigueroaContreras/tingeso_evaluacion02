@@ -54,7 +54,7 @@ export default function CalcularPagosPage() {
         } catch (error) {
             setPagos([]);
             setAlertType(feedbackTypes.Error);
-            if (error.response.status >= 500) {
+            if (error.response === undefined || error.response.status >= 500) {
                 setTimeout(() => {
                     setFeedback(
                         "Ocurrió un error al intentar calcular los pagos"

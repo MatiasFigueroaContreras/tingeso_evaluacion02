@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const PAGO_API_URL = "http://localhost:8080/pagos";
+const PAGO_API_URL = `${process.env.NEXT_PUBLIC_GATEWAY_URL}/pagos`;
 
 class PagoService {
     async calcular(year, mes, quincena) {

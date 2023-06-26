@@ -1,6 +1,6 @@
-import axios from "axios"
+import axios from "axios";
 
-const PROVEEDOR_API_URL = "http://localhost:8080/proveedores"
+const PROVEEDOR_API_URL = `${process.env.NEXT_PUBLIC_GATEWAY_URL}/proveedores`;
 
 class ProveedorService {
     async create(codigo, nombre, categoria, retencion) {
@@ -19,7 +19,7 @@ class ProveedorService {
     }
 
     async getAll() {
-        return axios.get(PROVEEDOR_API_URL)
+        return axios.get(PROVEEDOR_API_URL);
     }
 }
 

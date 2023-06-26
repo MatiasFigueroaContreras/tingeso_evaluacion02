@@ -13,6 +13,7 @@ export default function ImportarAcopioPage() {
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const handleSubmit = async (data) => {
+        setFeedback("");
         try {
             await AcopioLecheService.import(
                 data.file,
@@ -20,16 +21,14 @@ export default function ImportarAcopioPage() {
                 data.month,
                 data.fortnight
             );
-            setFeedback("");
             setTimeout(() => {
                 setFeedback("Se importaron correctamente los datos!");
                 setIsSubmitting(false);
             }, 400);
             setAlertType(feedbackTypes.Success);
         } catch (error) {
-            setFeedback("");
             setAlertType(feedbackTypes.Error);
-            if (error.response.status >= 500) {
+            if (error.response === undefined || error.response.status >= 500) {
                 setTimeout(() => {
                     setFeedback("Ocurrió un error al intentar subir los datos");
                     setIsSubmitting(false);

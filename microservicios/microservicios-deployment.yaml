@@ -23,6 +23,8 @@ spec:
                   env:
                     - name: SPRING_CLOUD_CONFIG_URI
                       value: http://config-service:8081
+                    - name: EUREKA_INSTANCE_NAME
+                      value: eureka-service
 
 ---
 # Gateway Service
@@ -53,7 +55,8 @@ spec:
                     - name: EUREKA_DEFAULT_ZONE
                       value: http://eureka-service:8761/eureka
                     - name: EUREKA_INSTANCE_NAME
-                      value: eureka-service
+                      value: gateway-service
+
 ---
 # Proveedor Service
 apiVersion: apps/v1
@@ -75,6 +78,8 @@ spec:
             containers:
                 - name: proveedor-service
                   image: matiasfc/tingeso2_proveedor_service:latest
+                  ports:
+                    - containerPort: 8001
                   env:
                     - name: DB_HOST
                       value: proveedor-db-service:5432
@@ -89,7 +94,7 @@ spec:
                     - name: EUREKA_DEFAULT_ZONE
                       value: http://eureka-service:8761/eureka
                     - name: EUREKA_INSTANCE_NAME
-                      value: eureka-service
+                      value: proveedor-service
 
 ---
 # Acopio Leche Service
@@ -112,6 +117,8 @@ spec:
             containers:
                 - name: acopio-leche-service
                   image: matiasfc/tingeso2_acopio_leche_service:latest
+                  ports:
+                    - containerPort: 8002                  
                   env:
                     - name: DB_HOST
                       value: acopio-leche-db-service
@@ -126,7 +133,7 @@ spec:
                     - name: EUREKA_DEFAULT_ZONE
                       value: http://eureka-service:8761/eureka
                     - name: EUREKA_INSTANCE_NAME
-                      value: eureka-service
+                      value: acopio-leche-service
 
 ---
 # Laboratorio Leche Service
@@ -149,6 +156,8 @@ spec:
             containers:
                 - name: laboratorio-leche-service
                   image: matiasfc/tingeso2_laboratorio_leche_service:latest
+                  ports:
+                    - containerPort: 8003
                   env:
                     - name: DB_HOST
                       value: laboratorio-leche-db-service
@@ -163,7 +172,7 @@ spec:
                     - name: EUREKA_DEFAULT_ZONE
                       value: http://eureka-service:8761/eureka
                     - name: EUREKA_INSTANCE_NAME
-                      value: eureka-service
+                      value: laboratorio-leche-service
 
 ---
 # Pago Service
@@ -186,6 +195,8 @@ spec:
             containers:
                 - name: pago-service
                   image: matiasfc/tingeso2_pago_service:latest
+                  ports:
+                    - containerPort: 8004
                   env:
                     - name: DB_HOST
                       value: pago-db-service
@@ -200,4 +211,4 @@ spec:
                     - name: EUREKA_DEFAULT_ZONE
                       value: http://eureka-service:8761/eureka
                     - name: EUREKA_INSTANCE_NAME
-                      value: eureka-service
+                      value: pago-service

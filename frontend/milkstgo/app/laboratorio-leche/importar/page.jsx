@@ -14,6 +14,7 @@ export default function ImportarLaboratorioLeche() {
 
     const handleSubmit = async (data) => {
         setIsSubmitting(true);
+        setFeedback("");
         try {
             await LaboratorioLecheService.import(
                 data.file,
@@ -21,16 +22,14 @@ export default function ImportarLaboratorioLeche() {
                 data.month,
                 data.fortnight
             );
-            setFeedback("");
             setTimeout(() => {
                 setFeedback("Se importaron correctamente los datos!");
                 setIsSubmitting(false);
             }, 400);
             setAlertType(feedbackTypes.Success);
         } catch (error) {
-            setFeedback("");
             setAlertType(feedbackTypes.Error);
-            if (error.response.status >= 500) {
+            if (error.response === undefined || error.response.status >= 500) {
                 setTimeout(() => {
                     setFeedback("Ocurrió un error al intentar subir los datos");
                     setIsSubmitting(false);
