@@ -9,6 +9,7 @@ import ProveedorService from "@/services/ProveedorService";
 import FeedbackAlert from "@/components/FeedbackAlert";
 import { feedbackTypes } from "@/components/FeedbackAlert";
 import { useState } from "react";
+import ButtonStyled from "@/components/ButtonStyled";
 
 export default function RegisterPage() {
     const [nombre, setNombre] = useState("");
@@ -87,13 +88,7 @@ export default function RegisterPage() {
                         onChange={(e) => setRetencion(e.target.value)}
                     />
                 </div>
-                <button
-                    className="button-style"
-                    type="submit"
-                    disabled={isSubmitting}
-                >
-                    Registrar
-                </button>
+                <ButtonStyled text="Registrar" disabled={isSubmitting}/>
             </form>
         </>
     );

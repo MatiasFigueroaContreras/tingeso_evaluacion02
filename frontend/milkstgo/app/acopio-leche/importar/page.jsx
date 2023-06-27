@@ -13,6 +13,7 @@ export default function ImportarAcopioPage() {
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const handleSubmit = async (data) => {
+        setIsSubmitting(true);
         setFeedback("");
         try {
             await AcopioLecheService.import(
@@ -52,6 +53,7 @@ export default function ImportarAcopioPage() {
                 title="Subir archivo con los kilos de leche"
                 startYear={2020}
                 onSubmit={handleSubmit}
+                isSubmitting={isSubmitting}
             />
         </>
     );

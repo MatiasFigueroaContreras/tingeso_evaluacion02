@@ -4,6 +4,7 @@ import "@/styles/upload-card.css";
 
 import { useRef, useState } from "react";
 import SelectQuincena from "./SelectQuincena";
+import ButtonStyled from "./ButtonStyled";
 
 function UploadZone({ onFileUpload }) {
     const [dragOver, setDragOver] = useState(false);
@@ -134,13 +135,7 @@ export default function UploadCard({ title, startYear, onSubmit, isSubmitting })
                     handleDataChange({ file: uploadedFile })
                 }
             />
-            <button
-                className="button-style"
-                type="submit"
-                disabled={isSubmitting}
-            >
-                Subir archivo
-            </button>
+            <ButtonStyled text="Subir archivo" disabled={isSubmitting}/>
         </form>
     );
 }
